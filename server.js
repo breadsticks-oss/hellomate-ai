@@ -13,23 +13,29 @@ app.post("/chat", async (req, res) => {
     const userMessage = req.body.message;
     if (!userMessage) return res.status(400).json({ reply: "No message provided" });
 
+    // New router endpoint
     const response = await fetch(
-      "https://api-inference.huggingface.co/models/tiiuae/falcon-7b-instruct",
+      "https://router.huggingface.co/hf-inference/tiiuae/falcon-7b-instruct",
       {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${HF_API_KEY}`,
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ inputs: userMessage })
+        body: JSON.stringify({
+          inputs: userMessage,
+          parameters: { max_new_tokens: 200 }
+        })
       }
     );
 
     const data = await response.json();
+
     if (data.error) return res.json({ reply: "HF API Error: " + data.error });
 
-    const text = Array.isArray(data) ? data[0].generated_text : data.generated_text;
-    res.json({ reply: text || "AI did not respond" });
+    // The router endpoint returns { "generated_text": "..."} inside an object
+    const text = data.generated_text || "AI did not respond";
+    res.json({ reply: text });
 
   } catch (err) {
     res.status(500).json({ reply: "Server Error: " + err.message });
