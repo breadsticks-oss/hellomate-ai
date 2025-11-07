@@ -13,7 +13,6 @@ app.post("/chat", async (req, res) => {
     const userMessage = req.body.message;
     if (!userMessage) return res.status(400).json({ reply: "No message provided" });
 
-    // Correct router endpoint and payload
     const response = await fetch(
       "https://api-inference.huggingface.co/models/tiiuae/falcon-7b-instruct",
       {
@@ -29,12 +28,11 @@ app.post("/chat", async (req, res) => {
       }
     );
 
-    // Parse JSON safely
     const data = await response.json();
 
     if (data.error) return res.json({ reply: "HF API Error: " + data.error });
 
-    // The router endpoint returns either generated_text or an array
+    // The router returns generated_text or array
     const text = Array.isArray(data) ? data[0].generated_text : data.generated_text;
     res.json({ reply: text || "AI did not respond" });
 
