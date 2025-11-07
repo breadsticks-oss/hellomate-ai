@@ -29,6 +29,7 @@ app.post("/chat", async (req, res) => {
     );
 
     const text = await response.text();
+    console.log("HF raw response:", text);
     let data;
     try { data = JSON.parse(text); } 
     catch { return res.json({ reply: "HF API Error: " + text }); }
