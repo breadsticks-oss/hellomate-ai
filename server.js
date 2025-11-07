@@ -13,16 +13,15 @@ app.post("/chat", async (req, res) => {
     const userMessage = req.body.message;
     if (!userMessage) return res.status(400).json({ reply: "No message provided" });
 
-    // ✅ use new router endpoint
+    // ✅ use the correct API endpoint for Mistral
     const response = await fetch(
-      "https://router.huggingface.co/hf-inference/tiiuae/falcon-7b-instruct",
+      "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2",
       {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${HF_API_KEY}`,
           "Content-Type": "application/json"
         },
-        // ✅ use the correct payload format for router
         body: JSON.stringify({
           inputs: userMessage,
           parameters: { max_new_tokens: 200 }
@@ -30,7 +29,7 @@ app.post("/chat", async (req, res) => {
       }
     );
 
-    // Hugging Face router sometimes returns plain text on error, so we need a safe parse
+    // Hugging Face sometimes returns plain text errors, so safely parse
     const text = await response.text();
     let data;
     try {
@@ -43,7 +42,7 @@ app.post("/chat", async (req, res) => {
       return res.json({ reply: "HF API Error: " + data.error });
     }
 
-    // ✅ Correct response handling
+    // ✅ Correctly get AI reply text
     const reply =
       Array.isArray(data) && data[0]?.generated_text
         ? data[0].generated_text
