@@ -14,12 +14,12 @@ app.post("/chat", async (req, res) => {
     if (!userMessage) return res.status(400).json({ reply: "No message provided" });
 
     const response = await fetch(
-      "https://api‑inference.huggingface.co/models/google/flan‑t5‑base",
+      "https://api-inference.huggingface.co/models/google/flan-t5-base",
       {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${HF_API_KEY}`,
-          "Content‑Type": "application/json"
+          "Content-Type": "application/json"
         },
         body: JSON.stringify({
           inputs: userMessage,
