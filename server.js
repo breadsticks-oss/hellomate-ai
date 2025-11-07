@@ -11,27 +11,23 @@ const HF_API_KEY = process.env.HF_API_KEY;
 app.post("/chat", async (req, res) => {
   try {
     const userMessage = req.body.message;
-    if (!userMessage) {
-      return res.status(400).json({ reply: "No message provided" });
-    }
+    if (!userMessage) return res.status(400).json({ reply: "No message provided" });
 
-    // ✅ Free working model: Facebook BlenderBot 400M
     const response = await fetch(
-      "https://router.huggingface.co/hf-inference/models/facebook/blenderbot-400M-distill",
+      "https://api‑inference.huggingface.co/models/google/flan‑t5‑base",
       {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${HF_API_KEY}`,
-          "Content-Type": "application/json",
+          "Content‑Type": "application/json"
         },
         body: JSON.stringify({
           inputs: userMessage,
-          parameters: { max_new_tokens: 200 },
-        }),
+          parameters: { max_new_tokens: 200 }
+        })
       }
     );
 
-    // Hugging Face sometimes returns plain text; parse safely
     const text = await response.text();
     let data;
     try {
@@ -56,4 +52,4 @@ app.post("/chat", async (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
