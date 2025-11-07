@@ -15,23 +15,23 @@ app.post("/chat", async (req, res) => {
       return res.status(400).json({ reply: "No message provided" });
     }
 
-    // ✅ Correct router endpoint
+    // ✅ Free working model: Facebook BlenderBot 400M
     const response = await fetch(
-      "https://router.huggingface.co/hf-inference/models/mistralai/Mistral-7B-Instruct-v0.2",
+      "https://router.huggingface.co/hf-inference/models/facebook/blenderbot-400M-distill",
       {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${HF_API_KEY}`,
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           inputs: userMessage,
-          parameters: { max_new_tokens: 200 }
-        })
+          parameters: { max_new_tokens: 200 },
+        }),
       }
     );
 
-    // ✅ Safely handle responses (some return text, some JSON)
+    // Hugging Face sometimes returns plain text; parse safely
     const text = await response.text();
     let data;
     try {
